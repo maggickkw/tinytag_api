@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  VOLUNTEER
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+  PREFER_NOT_TO_SAY
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  UNDER_REVIEW
+}
+
+// Add these relations to User model for the optional models
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String   // Hash this in your application
+  role      UserRole @default(VOLUNTEER)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship to volunteer profile
+  volunteerProfile VolunteerProfile?
+
+  // Admin actions - reverse relations (no fields/references needed on this side)
+  approvedApplications VolunteerApplication[] @relation("ApprovedBy")
+  rejectedApplications VolunteerApplication[] @relation("RejectedBy")
+
+  // Optional relations (uncomment if using these models)
+  statusHistoryChanges ApplicationStatusHistory[] @relation("StatusHistoryChanges")
+  fileUploads          FileUpload[]              @relation("FileUploads")
+
+  @@map("users")
+}
+
+model VolunteerProfile {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  userId String @unique @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Personal Information (Step 1)
+  fullName    String
+  dateOfBirth DateTime
+  gender      Gender
+
+  // Contact Information (Step 2)
+  email       String
+  phoneNumber String
+  address     String
+  country     String @default("GH")
+
+  // Education Information (Step 3)
+  school      String?
+  startYear   Int?
+  endYear     Int?
+  degree      String?
+
+  // Identification (Step 4)
+  nationalId      String?
+  profilePhotoUrl String?
+  idPhotoFrontUrl String?
+  idPhotoBackUrl  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relationship to application
+  application VolunteerApplication?
+
+  @@map("volunteer_profiles")
+}
+
+model VolunteerApplication {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  volunteerProfileId String           @unique @db.ObjectId
+  volunteerProfile   VolunteerProfile @relation(fields: [volunteerProfileId], references: [id], onDelete: Cascade)
+
+  status           ApplicationStatus @default(PENDING)
+  appliedAt        DateTime          @default(now())
+  reviewedAt       DateTime?
+  approvedAt       DateTime?
+  rejectedAt       DateTime?
+
+  // Admin who reviewed the application
+  reviewedById String? @db.ObjectId
+  reviewedBy   User?   @relation("ApprovedBy", fields: [reviewedById], references: [id])
+
+  // Admin who rejected the application (if different from reviewer)
+  rejectedById String? @db.ObjectId
+  rejectedBy   User?   @relation("RejectedBy", fields: [rejectedById], references: [id])
+
+  // Admin notes/comments
+  adminNotes String?
+  
+  // Rejection reason
+  rejectionReason String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("volunteer_applications")
+}
+
+// Optional: Activity log for tracking application status changes
+model ApplicationStatusHistory {
+  id            String            @id @default(auto()) @map("_id") @db.ObjectId
+  applicationId String            @db.ObjectId
+  
+  previousStatus ApplicationStatus?
+  newStatus      ApplicationStatus
+  changedById    String            @db.ObjectId
+  changedBy      User              @relation("StatusHistoryChanges", fields: [changedById], references: [id])
+  notes          String?
+  
+  createdAt DateTime @default(now())
+
+  @@map("application_status_history")
+}
+
+// Optional: File uploads tracking (if you need to track file metadata)
+model FileUpload {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  fileName         String
+  originalName     String
+  fileSize         Int
+  mimeType         String
+  fileUrl          String
+  uploadedById     String   @db.ObjectId
+  uploadedBy       User     @relation("FileUploads", fields: [uploadedById], references: [id])
+  
+  // What this file is for
+  fileType         FileType
+  relatedEntityId  String   @db.ObjectId // ID of the related entity (volunteer profile, etc.)
+  
+  createdAt        DateTime @default(now())
+
+  @@map("file_uploads")
+}
+
+enum FileType {
+  PROFILE_PHOTO
+  ID_PHOTO_FRONT
+  ID_PHOTO_BACK
+  DOCUMENT
+}
+
+// Add this relation to User model if you include FileUpload
+// fileUploads FileUpload[] @relation("FileUploads")
+
+// Add this relation to User model if you include ApplicationStatusHistory  
+// statusHistoryChanges ApplicationStatusHistory[] @relation("StatusHistoryChanges")
