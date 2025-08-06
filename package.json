@@ -4,11 +4,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rimraf dist && npx tsc",
+    "build": "rimraf dist && npx tsc && npx copyfiles prisma/schema.prisma dist/",
     "start": "node dist/src/index.js",
     "dev": "npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
     "seed": "ts-node prisma/seed.ts"
-  },
+  }
+,
   "keywords": [],
   "author": "",
   "license": "ISC",
