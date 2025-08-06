@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: express-with-prisma-orm
+    runtime: node
+    plan: free
+    envVars:
+      - key: DATABASE_URL
+        value: mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>?retryWrites=true&w=majority
+    region: oregon
+    buildCommand: npm install --production=false
+    startCommand: npm run start
