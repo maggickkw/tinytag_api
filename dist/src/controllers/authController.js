@@ -6,9 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.login = void 0;
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
 const response_1 = require("../utils/response");
-const client_1 = require("@prisma/client");
 const authService_1 = require("../services/authService");
-const prisma = new client_1.PrismaClient();
+const prisma_1 = require("../utils/prisma");
 const login = async (req, res) => {
     console.log("PAINNNNNN");
     try {
@@ -17,7 +16,7 @@ const login = async (req, res) => {
             (0, response_1.validationErrorResponse)(res, "Username and password are required!");
             return;
         }
-        const user = await prisma.user.findUnique({
+        const user = await prisma_1.prisma.user.findUnique({
             where: { email },
             select: {
                 id: true,

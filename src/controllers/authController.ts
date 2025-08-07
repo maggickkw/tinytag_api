@@ -8,8 +8,8 @@ import {
 import { PrismaClient } from "@prisma/client";
 import { generateToken } from "../services/authService";
 import { LoginInput } from "../types/auth.types";
+import { prisma } from "../utils/prisma";
 
-const prisma = new PrismaClient()
 
 export const login = async (
   req: Request<{}, {}, LoginInput>,

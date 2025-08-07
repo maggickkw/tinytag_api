@@ -10,11 +10,8 @@ import { authenticateToken, requireAdmin } from "../middleware/auth";
 const router = Router()
 
 router.post('/register', registerVolunteer);
-console.log("✅ volunteerRoutes file loaded");
 
-// router.get('/test', (req, res) => {
-//   res.json({ message: 'Volunteer routes are working!' });
-// });
+
 
 
 // Protected admin routes

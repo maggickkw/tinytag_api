@@ -20,10 +20,9 @@ enum UserRole {
 }
 
 enum Gender {
-  MALE
-  FEMALE
-  OTHER
-  PREFER_NOT_TO_SAY
+  male
+  female
+ 
 }
 
 enum ApplicationStatus {
@@ -53,6 +52,7 @@ model User {
   // Optional relations (uncomment if using these models)
   statusHistoryChanges ApplicationStatusHistory[] @relation("StatusHistoryChanges")
   fileUploads          FileUpload[]              @relation("FileUploads")
+  childRegistrations ChildRegistration[] @relation("ChildRegistrations")
 
   @@map("users")
 }
@@ -168,8 +168,31 @@ enum FileType {
   DOCUMENT
 }
 
-// Add this relation to User model if you include FileUpload
-// fileUploads FileUpload[] @relation("FileUploads")
 
-// Add this relation to User model if you include ApplicationStatusHistory  
-// statusHistoryChanges ApplicationStatusHistory[] @relation("StatusHistoryChanges")
+
+model ChildRegistration {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  lastName     String
+  firstName    String
+  otherNames   String?
+  dateOfBirth  DateTime
+  gender       Gender
+  hospital     String
+  town         String
+  fathersName        String
+  fathersNationality String
+  fathersPhone       String
+  fathersPlaceOfBirth String
+  mothersName        String
+  mothersNationality String
+  mothersPhone       String
+  mothersPlaceOfBirth String
+  witnessName      String
+  registrationDate DateTime @default(now())
+  registeredById String? @db.ObjectId
+  registeredBy   User?   @relation("ChildRegistrations", fields: [registeredById], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("child_registrations")
+}

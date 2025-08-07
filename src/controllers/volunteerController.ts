@@ -7,8 +7,8 @@ import {
 } from "../utils/response";
 import { hashPassword } from "../services/authService";
 import { RegisterVolunteerInput, UpdateApplicationStatusInput } from "../types/volunteer.types";
+import { prisma } from "../utils/prisma";
 
-const prisma = new PrismaClient();
 
 export const registerVolunteer = async (
   req: Request<{}, {}, RegisterVolunteerInput>,

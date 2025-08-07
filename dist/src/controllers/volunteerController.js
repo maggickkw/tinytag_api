@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getApplicationById = exports.updateApplicationStatus = exports.getPendingVolunteers = exports.registerVolunteer = void 0;
-const client_1 = require("@prisma/client");
 const response_1 = require("../utils/response");
 const authService_1 = require("../services/authService");
-const prisma = new client_1.PrismaClient();
+const prisma_1 = require("../utils/prisma");
 const registerVolunteer = async (req, res) => {
     try {
         const { email, password, fullName, dateOfBirth, gender, phoneNumber, address, country = "GH", school, startYear, endYear, degree, nationalId, profilePhotoUrl, idPhotoFrontUrl, idPhotoBackUrl, } = req.body;
@@ -15,7 +14,7 @@ const registerVolunteer = async (req, res) => {
             return;
         }
         // Check if user already exists
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = await prisma_1.prisma.user.findUnique({
             where: { email },
         });
         if (existingUser) {
@@ -23,7 +22,7 @@ const registerVolunteer = async (req, res) => {
             return;
         }
         // Create user and volunteer profile in a transaction
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await prisma_1.prisma.$transaction(async (tx) => {
             // Create user
             const hashedPassword = await (0, authService_1.hashPassword)(password);
             const user = await tx.user.create({
@@ -90,7 +89,7 @@ const getPendingVolunteers = async (req, res) => {
         const { page = 1, limit = 10, status = 'PENDING' } = req.query;
         const skip = (Number(page) - 1) * Number(limit);
         // Get pending applications with volunteer profiles
-        const applications = await prisma.volunteerApplication.findMany({
+        const applications = await prisma_1.prisma.volunteerApplication.findMany({
             where: {
                 status: status,
             },
@@ -121,7 +120,7 @@ const getPendingVolunteers = async (req, res) => {
             take: Number(limit),
         });
         // Get total count for pagination
-        const total = await prisma.volunteerApplication.count({
+        const total = await prisma_1.prisma.volunteerApplication.count({
             where: {
                 status: status,
             },
@@ -158,7 +157,7 @@ const updateApplicationStatus = async (req, res) => {
             return;
         }
         // Find the application
-        const application = await prisma.volunteerApplication.findUnique({
+        const application = await prisma_1.prisma.volunteerApplication.findUnique({
             where: { id: applicationId },
             include: {
                 volunteerProfile: {
@@ -177,7 +176,7 @@ const updateApplicationStatus = async (req, res) => {
             return;
         }
         // Update application in a transaction
-        const result = await prisma.$transaction(async (tx) => {
+        const result = await prisma_1.prisma.$transaction(async (tx) => {
             const updateData = {
                 status,
                 reviewedAt: new Date(),
@@ -254,7 +253,7 @@ exports.updateApplicationStatus = updateApplicationStatus;
 const getApplicationById = async (req, res) => {
     try {
         const { id } = req.params;
-        const application = await prisma.volunteerApplication.findUnique({
+        const application = await prisma_1.prisma.volunteerApplication.findUnique({
             where: { id },
             include: {
                 volunteerProfile: {
@@ -288,7 +287,7 @@ const getApplicationById = async (req, res) => {
             return;
         }
         // Get status history
-        const statusHistory = await prisma.applicationStatusHistory.findMany({
+        const statusHistory = await prisma_1.prisma.applicationStatusHistory.findMany({
             where: { applicationId: id },
             include: {
                 changedBy: {

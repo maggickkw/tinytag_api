@@ -2,20 +2,32 @@ import express, {Response} from "express"
 import morgan from "morgan"
 import cors from "cors"
 import cookieParser from "cookie-parser";
-import { PrismaClient } from "@prisma/client";
 import dotenv from 'dotenv';
 import authRoutes from "./routes/auth"
 import volunteerRoutes from "./routes/volunteer"
-import { registerVolunteer } from "./controllers/volunteerController";
+import './workers/childRegistrationWorker';
+import { prisma } from "./utils/prisma";
+import childRegistrationRoutes from './routes/childRegistration'
+import Redis from 'ioredis';
+
+
+
+
+export const redis = new Redis({
+  host: process.env.REDIS_HOST || 'localhost',
+  port: parseInt(process.env.REDIS_PORT || '6379', 10),
+  maxRetriesPerRequest: null,
+});
+
+
 
 dotenv.config()
 
 const PORT = process.env.PORT || 8000;
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
-const prisma = new PrismaClient({
-  log: NODE_ENV === 'development' ? ['query', 'info', 'warn', 'error'] : ['error'],
-});
+
+
 
 async function connectDB() {
   try {
@@ -51,6 +63,7 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes)
 app.use('/api/volunteer', volunteerRoutes);
+app.use('/api/register', childRegistrationRoutes)
 
 
 async function startServer() {

@@ -6,7 +6,7 @@ export interface RegisterVolunteerInput {
   // Personal Information (Step 1)
   fullName: string;
   dateOfBirth: string; // ISO date string
-  gender: 'MALE' | 'FEMALE' | 'OTHER' | 'PREFER_NOT_TO_SAY';
+  gender: 'male' | 'female' 
   
   // Contact Information (Step 2)
   phoneNumber: string;
