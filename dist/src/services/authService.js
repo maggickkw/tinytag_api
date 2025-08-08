@@ -43,7 +43,7 @@ const createUser = async (userData) => {
         data: {
             email: userData.email,
             password: hashedPassword,
-            role: userData.role,
+            role: userData?.role,
         },
         select: {
             id: true,

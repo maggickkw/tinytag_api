@@ -1,6 +1,6 @@
 const USER_ROLES = {
-  ADMIN: 'ADMIN',
-  VOLUNTEER: 'VOLUNTEER'
+  admin: 'admin',
+  volunteer: 'volunteer'
 };
 
 const APPLICATION_STATUS = {
@@ -11,10 +11,9 @@ const APPLICATION_STATUS = {
 };
 
 const GENDER = {
-  MALE: 'MALE',
-  FEMALE: 'FEMALE',
-  OTHER: 'OTHER',
-  PREFER_NOT_TO_SAY: 'PREFER_NOT_TO_SAY'
+  male: 'male',
+  female: 'female',
+
 };
 
 const FILE_TYPES = {

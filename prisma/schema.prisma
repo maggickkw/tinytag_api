@@ -15,8 +15,8 @@ datasource db {
 }
 
 enum UserRole {
-  ADMIN
-  VOLUNTEER
+  admin
+  volunteer
 }
 
 enum Gender {
@@ -37,7 +37,7 @@ model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   email     String   @unique
   password  String   // Hash this in your application
-  role      UserRole @default(VOLUNTEER)
+  role      UserRole @default(volunteer)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

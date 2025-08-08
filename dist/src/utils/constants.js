@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const USER_ROLES = {
-    ADMIN: 'ADMIN',
-    VOLUNTEER: 'VOLUNTEER'
+    admin: 'admin',
+    volunteer: 'volunteer'
 };
 const APPLICATION_STATUS = {
     PENDING: 'PENDING',
@@ -11,10 +11,8 @@ const APPLICATION_STATUS = {
     UNDER_REVIEW: 'UNDER_REVIEW'
 };
 const GENDER = {
-    MALE: 'MALE',
-    FEMALE: 'FEMALE',
-    OTHER: 'OTHER',
-    PREFER_NOT_TO_SAY: 'PREFER_NOT_TO_SAY'
+    male: 'male',
+    female: 'female',
 };
 const FILE_TYPES = {
     PROFILE_PHOTO: 'PROFILE_PHOTO',

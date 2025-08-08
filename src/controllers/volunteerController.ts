@@ -59,7 +59,7 @@ export const registerVolunteer = async (
         data: {
           email,
           password: hashedPassword,
-          role: "VOLUNTEER",
+          role: "volunteer",
         },
       });
 

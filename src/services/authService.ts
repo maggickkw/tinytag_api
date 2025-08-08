@@ -1,8 +1,7 @@
 
 import bcrypt from 'bcryptjs';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
-import { UserRole } from '../generated/prisma';
+import { PrismaClient, UserRole } from '@prisma/client';
 import type { StringValue } from 'ms';
 
 const prisma = new PrismaClient();
@@ -52,7 +51,7 @@ export const createUser = async (userData: { email: string; password: string; ro
     data: {
         email: userData.email,
       password: hashedPassword,
-      role: userData.role as UserRole,
+      role: userData?.role as UserRole,
     },
     select: {
       id: true,

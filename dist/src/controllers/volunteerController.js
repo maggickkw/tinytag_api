@@ -29,7 +29,7 @@ const registerVolunteer = async (req, res) => {
                 data: {
                     email,
                     password: hashedPassword,
-                    role: "VOLUNTEER",
+                    role: "volunteer",
                 },
             });
             // Create volunteer profile

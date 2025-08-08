@@ -9,7 +9,6 @@ const response_1 = require("../utils/response");
 const authService_1 = require("../services/authService");
 const prisma_1 = require("../utils/prisma");
 const login = async (req, res) => {
-    console.log("PAINNNNNN");
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -24,8 +23,6 @@ const login = async (req, res) => {
                 password: true,
                 role: true,
                 isActive: true,
-                createdAt: true,
-                updatedAt: true,
                 volunteerProfile: {
                     select: {
                         id: true,
@@ -62,7 +59,7 @@ const login = async (req, res) => {
             },
         });
         if (!user) {
-            (0, response_1.errorResponse)(res, "Invalid credentials", 401);
+            (0, response_1.errorResponse)(res, "Invalid credentials", 400);
             return;
         }
         const isValidPassword = await bcryptjs_1.default.compare(password, user.password);
@@ -76,7 +73,7 @@ const login = async (req, res) => {
         const { password: _, ...userWithoutPassword } = user;
         // Add application status to the volunteer profile if volunteer
         let userResponse = userWithoutPassword;
-        if (user.role === 'VOLUNTEER' && user.volunteerProfile?.application) {
+        if (user.role === 'volunteer' && user.volunteerProfile?.application) {
             const { application, ...profileWithoutApplication } = user.volunteerProfile;
             userResponse = {
                 ...userWithoutPassword,

@@ -23,7 +23,7 @@ async function main() {
     data: {
       email: 'admin@example.com',
       password: hashedPassword,
-      role: 'ADMIN',
+      role: 'admin',
       isActive: true,
     },
     select: {

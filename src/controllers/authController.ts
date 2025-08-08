@@ -15,7 +15,6 @@ export const login = async (
   req: Request<{}, {}, LoginInput>,
   res: Response
 ): Promise<void> => {
-  console.log("PAINNNNNN")
   try {
     const { email, password } = req.body;
 
@@ -32,8 +31,6 @@ export const login = async (
         password: true,
         role: true,
         isActive: true,
-        createdAt: true,
-        updatedAt: true,
         volunteerProfile: {
           select: {
             id: true,
@@ -71,7 +68,7 @@ export const login = async (
     });
 
     if (!user) {
-      errorResponse(res, "Invalid credentials", 401);
+      errorResponse(res, "Invalid credentials", 400);
       return;
     }
 
@@ -89,7 +86,7 @@ export const login = async (
 
     // Add application status to the volunteer profile if volunteer
     let userResponse: any = userWithoutPassword;
-    if (user.role === 'VOLUNTEER' && user.volunteerProfile?.application) {
+    if (user.role === 'volunteer' && user.volunteerProfile?.application) {
       const { application, ...profileWithoutApplication } = user.volunteerProfile;
       userResponse = {
         ...userWithoutPassword,
